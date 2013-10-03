@@ -32,9 +32,16 @@ int pd_univec_add(pd_univec *vec, void *elem, int (*cmp)(void *elem1, void *elem
 }
 
 int pd_univec_expand(pd_univec *vec) {
-  int new_reserved = vec->reserved << 1;
-  
+	int new_rsv = vec->reserved << 1;
+	if (realloc(vec->data, new_rsv)) {
+		error("Failed to realloc.");
+		return -1;
+	}
+
+	vec->reserved = new_rsv;
+	return 0
 }
+  
 
 inline int pd_univec_size() {
   return uv->size();
@@ -48,4 +55,11 @@ int pd_univec_exist(pd_univec *vec, void *elem, int (*cmp)(void *elem1, void *el
       return 1;
   }
   return 0;
+}
+
+// free all the data as well
+int pd_univec_free(pd_univec *vec) {
+	int i;
+	for (i = 0; i < size; ++i) {
+		
 }
