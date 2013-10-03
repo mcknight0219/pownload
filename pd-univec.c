@@ -58,8 +58,16 @@ int pd_univec_exist(pd_univec *vec, void *elem, int (*cmp)(void *elem1, void *el
 }
 
 // free all the data as well
-int pd_univec_free(pd_univec *vec) {
+void pd_univec_free(pd_univec *vec) {
 	int i;
-	for (i = 0; i < size; ++i) {
-		
+	if (!vec)
+		return;
+	
+	for (i = 0; i < vec->size; ++i) {
+		if (vec->data[i]) {
+			free(vec->data[i]);
+		}
+	}
+	free(vec);
+	return;
 }

@@ -8,11 +8,11 @@ struct pd_univec {
   void *data[1];
 };
 
-pd_univec * pd_univec_new();
-int pd_univec_add(pd_univec *vec, void *elem, int (*cmp)(void *elem1, void *elem2));
-int pd_univec_expand(pd_univec *vec);
-int pd_univec_size(pd_univec *vec);
-int pd_univec_exist(pd_univec *vec, void *elem, int (*cmp)(void *elem1, void *elem2));
-int pd_univec_free(pd_univec *vec);
+struct pd_univec * pd_univec_new();
+int pd_univec_add(struct pd_univec *vec, void *elem, int (*cmp)(void *elem1, void *elem2));
+int pd_univec_expand(struct pd_univec *vec);
+int pd_univec_size(struct pd_univec *vec);
+int pd_univec_exist(struct pd_univec *vec, void *elem, int (*cmp)(void *elem1, void *elem2));
+void pd_univec_free(struct pd_univec *vec);
 
 #endif
