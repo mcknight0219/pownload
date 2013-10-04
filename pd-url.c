@@ -15,7 +15,7 @@ struct pd_univec * pd_url_pages(int max_num_page) {
   int i;
   struct pd_univec * urls = pd_univec_new();
   for (i = 0; i < max_num_page; ++i) {
-    char * p = pd_url_get_page_addr(i);
+    char * p = pd_url_get_addr(i);
     pd_url_process_page(urls, pd_url_get(p));
   }
   return urls;
@@ -57,6 +57,20 @@ size_t pd_url_curl_callback(void * contents, size_t size, size_t nmemb, void * u
 
   return realsize;
 }
+
+char * pd_url_get_addr(int p) {
+  int blen = strlen(BASE);
+  int digit = (p > 9) ? 2 : 1;
+  char * s = (char *)malloc(strlen(blen) + digit + 1);
+  if (s) {
+    error("failed at malloc.");
+    return 0;
+  }
+  memcpy(s, BASE, blen);
+  
+}
+
+
 
 void pd_url_read_pb(const char *filename, struct pbc_slice *slice) {
 	FILE *f =fopen(filename, "rb");
