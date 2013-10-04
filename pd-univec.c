@@ -3,8 +3,8 @@
 #include <stdio.h>
 
 
-pd_univec * pd_univec_new() {
-  pd_univec *uv = (pd_univec *)malloc(sizeof(*uv) + (PD_UNIVEC_DEFAULT_SIZE-1) * sizeof(void *));
+struct pd_univec * pd_univec_new() {
+  struct pd_univec *uv = (struct pd_univec *)malloc(sizeof(*uv) + (PD_UNIVEC_DEFAULT_SIZE-1) * sizeof(void *));
   if (!uv)
     return 0;
   uv->reserved = PD_UNIVEC_DEFAULT_SIZE;
@@ -12,11 +12,11 @@ pd_univec * pd_univec_new() {
   return uv;
 }
 
-int pd_univec_add(pd_univec *vec, void *elem, int (*cmp)(void *elem1, void *elem2)) {
+int pd_univec_add(struct pd_univec *vec, void *elem, int (*cmp)(void *elem1, void *elem2)) {
   int res;
   int exist;
   if (vec->size + 1 == vec->reserved) {
-    res = pd_univec_expand(uv);
+    res = pd_univec_expand(vec);
     if (res = -1) {
       error("Failed to expand vector.");
       return res;
@@ -25,13 +25,13 @@ int pd_univec_add(pd_univec *vec, void *elem, int (*cmp)(void *elem1, void *elem
 
   // use provided comparision function
   if (!pd_univec_exist(vec, elem, cmp)) {
-    vec->data[size] = elem;
+    vec->data[vec->size] = elem;
     vec->size++;
   }
   return 0;
 }
 
-int pd_univec_expand(pd_univec *vec) {
+int pd_univec_expand(struct pd_univec *vec) {
 	int new_rsv = vec->reserved << 1;
 	if (realloc(vec->data, new_rsv)) {
 		error("Failed to realloc.");
@@ -39,18 +39,18 @@ int pd_univec_expand(pd_univec *vec) {
 	}
 
 	vec->reserved = new_rsv;
-	return 0
+	return 0;
 }
   
 
-inline int pd_univec_size() {
-  return uv->size();
+inline int pd_univec_size(struct pd_univec *vec) {
+  return vec->size;
 }
 
 
-int pd_univec_exist(pd_univec *vec, void *elem, int (*cmp)(void *elem1, void *elem2)) {
+int pd_univec_exist(struct pd_univec *vec, void *elem, int (*cmp)(void *elem1, void *elem2)) {
   int i;
-  for (i = 0; i < vec->size(); ++i) {
+  for (i = 0; i < vec->size; ++i) {
     if (!cmp(elem, vec->data[i]))
       return 1;
   }
@@ -58,7 +58,7 @@ int pd_univec_exist(pd_univec *vec, void *elem, int (*cmp)(void *elem1, void *el
 }
 
 // free all the data as well
-void pd_univec_free(pd_univec *vec) {
+void pd_univec_free(struct pd_univec *vec) {
 	int i;
 	if (!vec)
 		return;

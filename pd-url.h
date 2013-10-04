@@ -3,11 +3,14 @@
 #include "pd-univec.h"
 #include "pbc.h"
 
+static const char * BASE = "www.gazo-ch.net/bbs/7/";
+
 struct pd_url;
 
-struct pd_univec * pd_url_pages(int max_num_page = -1);
+struct pd_univec * pd_url_pages(int max_num_page);
 char *pd_url_get(const char *url);
-int pd_url_insert(struct url *u, struct pd_univec *vec);
+int pd_url_insert(struct pd_url *u, struct pd_univec *vec);
+size_t pd_url_curl_callback(void * contents, size_t size, size_t nmemb, void * userp);
 
 // a group of APIs
 void pd_url_read_pb(const char * filename, struct pbc_slice * slice);
