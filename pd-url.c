@@ -11,14 +11,12 @@ struct pd_url {
 	unsigned long hash;
 };
 
-struct pd_univec * pd_url_pages(int max_num_page) {
+void pd_url_pages(int max_num_page, struct pd_univec * vec) {
   int i;
-  struct pd_univec * urls = pd_univec_new();
   for (i = 0; i < max_num_page; ++i) {
     char * p = pd_url_get_addr(i);
-    pd_url_process_page(urls, pd_url_get(p));
+    pd_url_parse_html(vec, pd_url_get(p));
   }
-  return urls;
 }
 
 // GET method from the address
@@ -61,15 +59,23 @@ size_t pd_url_curl_callback(void * contents, size_t size, size_t nmemb, void * u
 char * pd_url_get_addr(int p) {
   int blen = strlen(BASE);
   int digit = (p > 9) ? 2 : 1;
-  char * s = (char *)malloc(strlen(blen) + digit + 1);
+  char * s = (char *)malloc(blen + digit + 1);
   if (s) {
     error("failed at malloc.");
     return 0;
   }
+	char * d = (char *)malloc(digit + 1);
+	itoa(p, d, 10);
+	d[digit] = 0;
   memcpy(s, BASE, blen);
-  
+	memcpy(s+BASE, d, digit);
+	s[blen+digit] = 0;
+
+	return s;
 }
 
+void pd_url_parse_html(struct pd_univec * ,const char *html) {
+}
 
 
 void pd_url_read_pb(const char *filename, struct pbc_slice *slice) {
@@ -126,6 +132,25 @@ struct pd_univec * pd_url_rmessage(struct pbc_env * env, struct pbc_slice * slic
 
 	return vec;
 }
+
+// write the contents from vector to the message
+void pd_url_wmessage(struct pbc_env * env, struct pbc_slice * slice, struct pd_univec * vec) {
+	int i, url_n = vec->size;
+	void ** data = vec->data;
+	struct pbc_wmessage urls = pbc_wmessage_new(env, "url.Urls");
+	for (i = 0; i < url_n; ++i) {
+		struct pbc_wmessage * url = pbc_wmessage_message(urls, "url");
+		pbc_wmessage_string (url, "link",  (struct pd_url *)data[i]->link,  -1);
+		pbc_wmessage_integer(url, "added", (struct pd_url *)data[i]->added, -1);
+		pbc_wmessage_integer(url, "date",  (struct pd_url *)data[i]->date,  -1);
+		pbc_wmessage_integer(url, "hash",  (struct pd_url *)date[i]->hash,  -1);
+	}
+
+	pbc_wmessage_buffer(urls, slice);
+	pbc_wmessage_delete(urls);
+}
+
+
 
 // compare two url
 int pd_url_cmp(void *url1, void *url2) {
