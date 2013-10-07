@@ -1,7 +1,7 @@
 package url;
 
 message Url {
-  required string link  =	1;
+  required string link  = 1;
   required int32  added = 2;
   required int32  date  = 3;
   required int32  hash  = 4;

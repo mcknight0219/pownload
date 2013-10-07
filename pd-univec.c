@@ -37,7 +37,7 @@ int pd_univec_add(struct pd_univec *vec, void *elem, int (*cmp)(void *elem1, voi
   return 0;
 }
 
-pd_univec_expand(struct pd_univec * vec) {
+int pd_univec_expand(struct pd_univec * vec) {
   int new_rsv = vec->reserved << 1;
   void * new_data;
   if (NULL == (new_data = realloc(vec->data, new_rsv * sizeof(void *)))) {

@@ -5,10 +5,11 @@
 #define PD_UNIVEC_AT(v,i)							\
   (*(long *)(v->data + i * sizeof(void *)))
 
+
 struct pd_univec {
   int size;
   int reserved;
-  void * data;
+  char * data;
 };
 
 struct pd_univec * pd_univec_new();
