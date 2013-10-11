@@ -12,7 +12,7 @@ struct pd_url {
   char * link;
   int added;
   int date;
-  unsigned long hash;
+  int hash;
 };
 // http request related apis
 void   pd_url_pages(int max_num_page, struct pd_univec * vec);
@@ -24,11 +24,13 @@ void   pd_url_parse_html(struct pd_univec * vec, char * html);
 void   pd_url_parse_link(struct pd_univec * vec, GumboNode * node);
 int    _pd_url_is_imgref(const char * href);
 int    _pd_url_date_from_addr(const char *href);
+char * _pd_url_short(const char *href);
 
 // pbc related APIs
-void   pd_url_read_pb(const char * filename, struct pbc_slice * slice);
+void   pd_url_read_file (const char * filename, struct pbc_slice * slice);
 void   pd_url_write_pb(const char * filename, struct pbc_slice * slice);
-void   pd_url_wmessage(struct pbc_env * env, struct pbc_slice * slice, struct pd_univec * vec);
+void   pd_url_write_db(const char * filename, struct pbc_slice * slice);
+void  pd_url_wmessage(struct pbc_env * env, struct pbc_slice * slice, struct pd_univec * vec);
 int    pd_url_cmp(void *url1, void *url2);
 struct pd_univec * pd_url_rmessage(struct pbc_env * env, struct pbc_slice * slice);
 

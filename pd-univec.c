@@ -26,7 +26,6 @@ int pd_univec_add(struct pd_univec *vec, void *elem, int (*cmp)(void *elem1, voi
       fprintf(stderr, "Failed to expand vector.");
       return -1;
     }
-    printf("Expanding the vector\n");
   }
 
   // use provided comparision function
@@ -39,6 +38,7 @@ int pd_univec_add(struct pd_univec *vec, void *elem, int (*cmp)(void *elem1, voi
 
 int pd_univec_expand(struct pd_univec * vec) {
   int new_rsv = vec->reserved << 1;
+  int size = vec->size;
   void * new_data;
   if (NULL == (new_data = realloc(vec->data, new_rsv * sizeof(void *)))) {
     fprintf(stderr, "Failed to realloc.");
@@ -47,6 +47,7 @@ int pd_univec_expand(struct pd_univec * vec) {
 	
   vec->reserved = new_rsv;
   vec->data = new_data;
+  vec->size = size;
   return 0;
 }
   

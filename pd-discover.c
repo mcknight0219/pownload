@@ -5,34 +5,37 @@
 #include "pd-url.h"
 #include "pd-univec.h"
 
-#define MAX_PAGE 10
-static const char *pd_pb_filename = "/home/qiang/.pd.pb";
+#define MAX_PAGE 1
+static const char * pd_pb_filename = "pownload.pb";
+static const char * pd_db_filename = "pownload.db";
   
 void usage() {
 	printf("Usage: pd-discover [--max_page_num=<num>]\n");
 }
 
+extern void dump_hex(char *buffer, int sz);
+
 int main(int argc, char * argv[]) {
 	int max_page_num;
 	if (argc > 2) {
-		usage();
-		exit(0);
+	  usage();
+	  exit(0);
 	}
 
 	if (argc == 1) {
-		max_page_num = MAX_PAGE;
+	  max_page_num = MAX_PAGE;
 	} else {
-		if (strncmp(argv[1], "--max_page_num=", strlen("--max_page_num="))) {
-				printf("unknown argument %s\n", argv[1]);
-				usage();
-				exit(0);
-			}
-		max_page_num = atoi(strchr(argv[1], '=')+1);
+	  if (strncmp(argv[1], "--max_page_num=", strlen("--max_page_num="))) {
+	    printf("unknown argument %s\n", argv[1]);
+	    usage();
+	    exit(0);
+	  }
+	  max_page_num = atoi(strchr(argv[1], '=')+1);
 	}
 
 	// first set up pbc
 	struct pbc_slice slice;
-	pd_url_read_pb(pd_pb_filename, &slice);
+	pd_url_read_file(pd_pb_filename, &slice);
 	if (slice.buffer == NULL)
 	  printf("No message file found. Creating a new one\n");
 	struct pbc_env * env = pbc_new();
@@ -41,6 +44,10 @@ int main(int argc, char * argv[]) {
 		printf("failed at pbc_register: %s\n", pbc_error(env));
 		//return 1;
 	}
+	free(slice.buffer);
+	slice.len = 0;
+
+	pd_url_read_file(pd_db_filename, &slice);
 	struct pd_univec * msg_vec = pd_url_rmessage(env, &slice);
 
 	// message is loaded up, let's get started
@@ -48,7 +55,8 @@ int main(int argc, char * argv[]) {
 	
 	// write back the updated messages
 	pd_url_wmessage(env, &slice, msg_vec);
-	pd_url_write_pb(pd_pb_filename, &slice);
+	
+	pd_url_write_db(pd_db_filename, &slice);
 
 	// delete resources, though unnecessary
 	pbc_delete(env);
