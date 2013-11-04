@@ -5,8 +5,8 @@
 #include "pd-univec.h"
 #include "pbc.h"
 
-static const char * BASE = "www.gazo-ch.net/bbs/7/";
-static const char * IMG_BASE = "http://img.gazo-ch.net/bbs/7/img/";
+static const char * BASE = "";
+static const char * IMG_BASE = "";
 
 struct pd_url {
   char * link;

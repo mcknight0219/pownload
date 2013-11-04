@@ -15,7 +15,9 @@ struct curl_buf {
 
 void pd_url_pages(int max_num_page, struct pd_univec * vec) {
   int i;
+  printf("Processing page  ");
   for (i = 0; i < max_num_page; ++i) {
+    printf("\b%d", i);
     char * p = pd_url_get_addr(i);
     pd_url_parse_html(vec, pd_url_get(p));
   }
